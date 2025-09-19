@@ -1,0 +1,14 @@
+[Unit]
+Description=ROV Control System
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/rov/controller/software
+ExecStart=/usr/bin/python3 rov_control.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
