@@ -9,7 +9,7 @@ Surface control interface for ROV operation.
   - Vertical thruster: Up/Down
 
 ## Processing
-- **Computer**: Raspberry Pi 5 4GB (located in controller enclosure)
+- **Computer**: Raspberry Pi 5 4GB (Raspberry Pi OS 64-bit) (located in controller enclosure)
 - **PWM Generation**: Adafruit PWM hat (~16 channels available)
 - **Current PWM Usage**: 3 channels (1 per thruster)
 
