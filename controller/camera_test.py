@@ -89,32 +89,36 @@ def main():
     print("Press 'q' to quit, 's' to take screenshot")
     print("=" * 40)
 
-    # Initialize camera
-    cap = cv2.VideoCapture(0)  # Try camera index 0 first
+    # Initialize camera with V4L2 backend (recommended for Raspberry Pi)
+    cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
 
     if not cap.isOpened():
-        # Try other camera indices
-        for i in range(1, 5):
-            print(f"Trying camera index {i}...")
-            cap = cv2.VideoCapture(i)
-            if cap.isOpened():
-                print(f"Camera found at index {i}")
-                break
-        else:
-            print("ERROR: No USB camera found!")
-            print("Make sure your camera is connected and recognized by the system.")
-            print("You can check with: lsusb | grep -i camera")
-            return 1
+        print("V4L2 backend failed, trying default backend...")
+        cap = cv2.VideoCapture(0)
+
+        if not cap.isOpened():
+            # Try other camera indices
+            for i in range(1, 5):
+                print(f"Trying camera index {i}...")
+                cap = cv2.VideoCapture(i, cv2.CAP_V4L2)
+                if cap.isOpened():
+                    print(f"Camera found at index {i}")
+                    break
+            else:
+                print("ERROR: No USB camera found!")
+                print("Make sure your camera is connected and recognized by the system.")
+                print("You can check with: python3 camera_debug.py")
+                return 1
 
     try:
         # Detect capabilities
         supported_res, default_w, default_h, default_fps = detect_camera_capabilities(cap)
 
-        # Test framerate
-        fps_ok = test_framerate(cap, 30)
+        # Test framerate (your camera supports 15fps native)
+        fps_ok = test_framerate(cap, 15)
         if not fps_ok:
-            print("Warning: 30fps may not be achievable")
-            test_framerate(cap, 15)  # Fallback to 15fps
+            print("Warning: Even 15fps may not be achievable")
+            test_framerate(cap, 10)  # Fallback to 10fps
 
         # Use best available resolution
         if supported_res:
