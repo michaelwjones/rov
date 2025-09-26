@@ -28,13 +28,25 @@ def test_pwm_hat():
 
         time.sleep(2)
 
-        # Test forward pulse
+        # Test forward, reverse, then neutral
         forward_duty = int((PWM_SETTINGS['max_pulse'] / 20000.0) * 65535)
+        reverse_duty = int((PWM_SETTINGS['min_pulse'] / 20000.0) * 65535)
+
         for name, channel in THRUSTER_CHANNELS.items():
+            # Forward
             pca.channels[channel].duty_cycle = forward_duty
             print(f"  {name}: Channel {channel} - Forward PWM sent")
             time.sleep(1)
+
+            # Reverse
+            pca.channels[channel].duty_cycle = reverse_duty
+            print(f"  {name}: Channel {channel} - Reverse PWM sent")
+            time.sleep(1)
+
+            # Back to neutral
             pca.channels[channel].duty_cycle = neutral_duty
+            print(f"  {name}: Channel {channel} - Neutral PWM sent")
+            time.sleep(0.5)
 
         pca.deinit()
         print("PWM hat test: PASSED")
