@@ -12,12 +12,12 @@ THRUSTER_CHANNELS = {
 
 # GPIO pin assignments (BCM numbering)
 BUTTON_PINS = {
-    'h1_forward': 17,   # Horizontal thruster 1 forward
-    'h1_back': 18,      # Horizontal thruster 1 back
+    'h1_forward': 12,   # Horizontal thruster 1 forward
+    'h1_back': 13,      # Horizontal thruster 1 back
     'h2_forward': 19,   # Horizontal thruster 2 forward
     'h2_back': 20,      # Horizontal thruster 2 back
     'v_up': 21,         # Vertical thruster up
-    'v_down': 22        # Vertical thruster down
+    'v_down': 16        # Vertical thruster down
 }
 
 
@@ -25,8 +25,8 @@ BUTTON_PINS = {
 PWM_SETTINGS = {
     'frequency': 50,        # Hz - standard for ESCs
     'neutral': 1500,        # Microseconds - stopped
-    'min_pulse': 1100,      # Microseconds - full reverse
-    'max_pulse': 1900,      # Microseconds - full forward
+    'min_pulse': 1000,      # Microseconds - full reverse
+    'max_pulse': 2000,      # Microseconds - full forward
     'deadband': 50          # Microseconds around neutral
 }
 

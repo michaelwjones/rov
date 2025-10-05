@@ -26,7 +26,8 @@ def test_pwm_hat():
             pca.channels[channel].duty_cycle = neutral_duty
             print(f"  {name}: Channel {channel} - Neutral PWM sent")
 
-        time.sleep(2)
+        print("  Waiting 3 seconds for ESC unlock/arming...")
+        time.sleep(3)
 
         # Test forward, reverse, then neutral
         forward_duty = int((PWM_SETTINGS['max_pulse'] / 20000.0) * 65535)
