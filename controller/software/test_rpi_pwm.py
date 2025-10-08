@@ -169,7 +169,7 @@ def test_esc_control(pwm_objects):
             # Forward
             pwm.change_duty_cycle(forward_duty)
             print(f"  Forward (2000µs, 10% duty)...")
-            time.sleep(1)
+            time.sleep(5)
 
             # Neutral
             pwm.change_duty_cycle(neutral_duty)
@@ -179,7 +179,7 @@ def test_esc_control(pwm_objects):
             # Reverse
             pwm.change_duty_cycle(reverse_duty)
             print(f"  Reverse (1000µs, 5% duty)...")
-            time.sleep(1)
+            time.sleep(5)
 
             # Back to neutral
             pwm.change_duty_cycle(neutral_duty)
