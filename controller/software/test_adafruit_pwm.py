@@ -48,39 +48,45 @@ def test_pwm_hat():
         pca = PCA9685(i2c)
         pca.frequency = PWM_SETTINGS['frequency']
 
-        # Test neutral signal on all thruster channels
-        neutral_duty = int((PWM_SETTINGS['neutral'] / 20000.0) * 65535)
+        # Calculate duty cycles as percentages (for 50Hz = 20ms period)
+        # Neutral: 7.5% duty cycle
+        # Forward: 10% duty cycle
+        # Backward: 5% duty cycle
+        neutral_duty = int(0.075 * 65535)
+        forward_duty = int(0.10 * 65535)
+        backward_duty = int(0.05 * 65535)
 
-        print("Arming ESCs with neutral signal...")
+        print("Arming ESCs with neutral signal (7.5% duty cycle)...")
         for name, channel in THRUSTER_CHANNELS.items():
             pca.channels[channel].duty_cycle = neutral_duty
-            print(f"  {name}: Channel {channel} - Neutral PWM (1500µs)")
+            print(f"  {name}: Channel {channel} - Neutral PWM (7.5%)")
 
         print("  Waiting 3 seconds for ESC arming...")
         time.sleep(3)
         print()
 
-        # Test forward, reverse, then neutral
-        forward_duty = int((PWM_SETTINGS['max_pulse'] / 20000.0) * 65535)
-        reverse_duty = int((PWM_SETTINGS['min_pulse'] / 20000.0) * 65535)
-
         print("Testing each thruster...")
         for name, channel in THRUSTER_CHANNELS.items():
             print(f"\n{name} (Channel {channel}):")
 
-            # Forward
+            # Forward for 5 seconds
             pca.channels[channel].duty_cycle = forward_duty
-            print(f"  Forward (2000µs)...")
+            print(f"  Forward (10% duty cycle)...")
+            time.sleep(5)
+
+            # Neutral
+            pca.channels[channel].duty_cycle = neutral_duty
+            print(f"  Neutral (7.5% duty cycle)")
             time.sleep(1)
 
-            # Reverse
-            pca.channels[channel].duty_cycle = reverse_duty
-            print(f"  Reverse (1000µs)...")
-            time.sleep(1)
+            # Backward for 5 seconds
+            pca.channels[channel].duty_cycle = backward_duty
+            print(f"  Backward (5% duty cycle)...")
+            time.sleep(5)
 
             # Back to neutral
             pca.channels[channel].duty_cycle = neutral_duty
-            print(f"  Neutral (1500µs)")
+            print(f"  Neutral (7.5% duty cycle)")
             time.sleep(0.5)
 
         pca.deinit()
