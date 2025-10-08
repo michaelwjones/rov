@@ -1,0 +1,20 @@
+Pi 5 PWM Configuration Fix
+
+Replace this line in /boot/firmware/config.txt:
+dtoverlay=pwm-2chan,pin=12,func=4,pin2=13,func2=4
+
+With these two lines:
+dtoverlay=pwm,pin=12,func=4
+dtoverlay=pwm,pin=13,func=4
+
+Or try:
+dtoverlay=pwm-gpio,gpio=12
+dtoverlay=pwm-gpio,gpio=13
+
+After changing, reboot and verify:
+sudo reboot
+
+Then check:
+dtoverlay -l
+ls /sys/class/pwm/
+lsmod | grep pwm

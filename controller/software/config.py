@@ -15,7 +15,7 @@ THRUSTER_CHANNELS = {
 # IMPORTANT: Pi 5 can only use 2 PWM channels simultaneously
 # This is NOT suitable for 3-thruster operation - use PCA9685 instead
 RPI5_PWM = {
-    'chip': 2,  # Pi 5 uses chip 2 (Pi 1-4 use chip 0)
+    'chip': 0,  # Using custom pwm-pi5 overlay (creates pwmchip0 with 4 channels)
     'channels': {
         # PWM Channel : GPIO Pin mapping
         0: 12,  # PWM0_CHAN0 → GPIO 12 (now available - buttons moved to GPIO 5/6)
@@ -34,7 +34,8 @@ RPI5_PWM = {
         'GPIO 12/13 now available for PWM (buttons moved to GPIO 5/6)',
         'GPIO 19 still conflicts with h2_forward button',
         'Use channels 0-1 (GPIO 12/13) for PWM testing',
-        'Requires dtoverlay=pwm-2chan,pin=12,func=4,pin2=13,func2=4 in /boot/firmware/config.txt',
+        'Requires dtoverlay=pwm-pi5 in /boot/firmware/config.txt (custom overlay)',
+        'Custom overlay installed at /boot/firmware/overlays/pwm-pi5.dtbo',
         'Requires rpi-hardware-pwm library: sudo pip3 install rpi-hardware-pwm'
     ]
 }

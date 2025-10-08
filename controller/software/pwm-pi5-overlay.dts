@@ -1,0 +1,44 @@
+/dts-v1/;
+/plugin/;
+
+/*
+ * Custom PWM overlay for Raspberry Pi 5
+ * Enables hardware PWM on GPIO 12 and 13
+ *
+ * Installation:
+ *   1. Compile: dtc -I dts -O dtb -o pwm-pi5.dtbo pwm-pi5-overlay.dts
+ *   2. Install: sudo cp pwm-pi5.dtbo /boot/firmware/overlays/
+ *   3. Enable: Add "dtoverlay=pwm-pi5" to /boot/firmware/config.txt
+ *   4. Reboot: sudo reboot
+ *
+ * Verification:
+ *   ls /sys/class/pwm/
+ *   Should show: pwmchip0 (with 4 channels)
+ *
+ * Usage with rpi-hardware-pwm:
+ *   pwm = HardwarePWM(pwm_channel=0, hz=50, chip=0)  # GPIO 12
+ *   pwm = HardwarePWM(pwm_channel=1, hz=50, chip=0)  # GPIO 13
+ */
+
+/{
+    compatible = "brcm,bcm2712";
+
+    fragment@0 {
+        target = <&rp1_gpio>;
+        __overlay__ {
+            pwm_pins: pwm_pins {
+                pins = "gpio12", "gpio13";
+                function = "pwm0", "pwm0";
+            };
+        };
+    };
+
+    fragment@1 {
+        target = <&rp1_pwm0>;
+        __overlay__ {
+            pinctrl-names = "default";
+            pinctrl-0 = <&pwm_pins>;
+            status = "okay";
+        };
+    };
+};

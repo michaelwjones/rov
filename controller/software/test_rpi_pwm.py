@@ -23,7 +23,8 @@ except ImportError:
 from config import PWM_SETTINGS
 
 # Raspberry Pi 5 PWM configuration
-PI5_PWM_CHIP = 2  # Pi 5 uses chip 2 (Pi 1-4 use chip 0)
+# Note: With custom pwm-pi5 overlay, the chip number is 0 (not 2 as in some docs)
+PI5_PWM_CHIP = 0  # Using custom pwm-pi5 overlay
 
 # PWM channels to test (limited to 2 on Pi 5)
 # Channel mapping: 0=GPIO12, 1=GPIO13, 2=GPIO18, 3=GPIO19
@@ -65,6 +66,7 @@ def test_pwm_init():
     print("-" * 50)
     print("Using GPIO 12 and 13 (PWM channels 0 and 1)")
     print("Buttons moved to GPIO 5/6 - no conflicts")
+    print("Using custom pwm-pi5 overlay")
     print()
     print("Raspberry Pi 5 PWM Limitations:")
     print("- Only 2 PWM channels active simultaneously")
@@ -80,15 +82,30 @@ def test_pwm_init():
     pwm_objects = {}
 
     try:
-        # Initialize PWM channels
+        # Check if PWM is available
+        import os
+        if not os.path.exists('/sys/class/pwm/pwmchip0'):
+            raise Exception("PWM chip not found. Ensure dtoverlay=pwm-pi5 is in /boot/firmware/config.txt")
+
+        # Initialize PWM channels - library may warn about config but will work
         for name, config in PWM_TEST_CHANNELS.items():
-            pwm = HardwarePWM(
-                pwm_channel=config['channel'],
-                hz=PWM_SETTINGS['frequency'],
-                chip=PI5_PWM_CHIP
-            )
-            pwm_objects[name] = pwm
-            print(f"  {config['name']}: Channel {config['channel']} (GPIO {config['gpio']}) - Initialized")
+            try:
+                pwm = HardwarePWM(
+                    pwm_channel=config['channel'],
+                    hz=PWM_SETTINGS['frequency'],
+                    chip=PI5_PWM_CHIP
+                )
+                pwm_objects[name] = pwm
+                print(f"  {config['name']}: Channel {config['channel']} (GPIO {config['gpio']}) - Initialized")
+            except Exception as lib_error:
+                # Library checks for pwm-2chan but pwm-pi5 works too
+                error_msg = str(lib_error)
+                if "dtoverlay=pwm-2chan" in error_msg:
+                    print(f"\nNote: Library expects 'pwm-2chan' but 'pwm-pi5' overlay is active.")
+                    print("The overlay IS working. Verify with:")
+                    print("  ls /sys/class/pwm/pwmchip0")
+                    print()
+                raise
 
         print()
         print("PWM initialization: PASSED")
@@ -101,9 +118,10 @@ def test_pwm_init():
         print()
         print("Troubleshooting:")
         print("1. Ensure PWM is enabled in /boot/firmware/config.txt:")
-        print("   dtoverlay=pwm-2chan")
+        print("   dtoverlay=pwm-pi5")
         print("2. Reboot after changing config.txt")
-        print("3. Verify with: lsmod | grep pwm")
+        print("3. Verify PWM chip exists: ls /sys/class/pwm/")
+        print("4. Install library: sudo pip3 install rpi-hardware-pwm")
         print()
         return False, pwm_objects
 
