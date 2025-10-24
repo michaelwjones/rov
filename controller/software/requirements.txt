@@ -1,3 +1,2 @@
-adafruit-circuitpython-pca9685
-adafruit-blinka
+pyserial
 RPi.GPIO

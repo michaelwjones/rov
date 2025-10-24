@@ -18,7 +18,7 @@ The main underwater vehicle housing all the core components.
 - **Horizontal**: 2x Apisqueen U2 Mini 16V 130W (1 CW, 1 CCW)
 - **Vertical**: 1x Apisqueen U2 Mini 16V 130W (CW)
 - **ESCs**: Built-in on all thrusters
-- **Control**: PWM from Raspberry Pi via Adafruit PWM hat
+- **Control**: PWM from Raspberry Pi via Pololu Mini Maestro 12-channel USB servo controller
 
 ## Power
 - **Supply**: TBD - Recommendations:

@@ -71,7 +71,7 @@ def test_pwm_init():
     print("Raspberry Pi 5 PWM Limitations:")
     print("- Only 2 PWM channels active simultaneously")
     print("- Cannot test all 3 thrusters with native PWM")
-    print("- Use Adafruit PWM hat for full 3-thruster operation")
+    print("- Use Pololu Maestro USB servo controller for full 3-thruster operation")
     print()
     input("Press Enter to continue with PWM test...")
     print()
@@ -252,7 +252,7 @@ def main():
             print()
             print("Note: Only 2 ESCs can be controlled simultaneously")
             print("with native Pi 5 PWM. For 3-thruster operation,")
-            print("use the Adafruit PCA9685 PWM hat instead.")
+            print("use the Pololu Maestro USB servo controller instead.")
         else:
             print("Some tests failed. Check configuration and connections.")
 

@@ -3,8 +3,31 @@ ROV Configuration
 Pin mappings and system settings
 """
 
-# PWM channels on Adafruit PCA9685 hat (0-15 available)
+# Pololu Mini Maestro 12-channel servo controller
+# PWM channels (0-11 available on 12-channel version)
 # This is the primary PWM solution for the ROV
+# Connection: TTL serial via GPIO UART pins (not USB)
+MAESTRO_CONFIG = {
+    'port': '/dev/serial0',  # TTL serial port (UART on GPIO 14/15)
+    'baud_rate': 9600,       # Serial baud rate (must match Maestro settings)
+    'device_number': 0x0C,   # Pololu Protocol device number
+    'wiring': {
+        # Raspberry Pi 5 GPIO -> Pololu Maestro
+        'pi_tx_gpio14': 'maestro_rx',  # GPIO 14 (TX) -> Maestro RX pin
+        'pi_rx_gpio15': 'maestro_tx',  # GPIO 15 (RX) -> Maestro TX pin
+        'pi_gnd': 'maestro_gnd'        # GND -> GND (required)
+    },
+    'notes': [
+        'TTL serial connection (not USB)',
+        'Maestro TX connects to Pi RX (GPIO 15)',
+        'Maestro RX connects to Pi TX (GPIO 14)',
+        'Shared GND connection required',
+        'Maestro needs separate power supply (not from Pi)',
+        'UART must be enabled in /boot/firmware/config.txt',
+        'Serial console must be disabled for UART use'
+    ]
+}
+
 THRUSTER_CHANNELS = {
     'horizontal_1': 0,  # Port thruster (left side)
     'horizontal_2': 1,  # Starboard thruster (right side)
@@ -13,7 +36,7 @@ THRUSTER_CHANNELS = {
 
 # Raspberry Pi 5 Hardware PWM Configuration (for testing only)
 # IMPORTANT: Pi 5 can only use 2 PWM channels simultaneously
-# This is NOT suitable for 3-thruster operation - use PCA9685 instead
+# This is NOT suitable for 3-thruster operation - use Pololu Maestro instead
 RPI5_PWM = {
     'chip': 0,  # Using custom pwm-pi5 overlay (creates pwmchip0 with 4 channels)
     'channels': {

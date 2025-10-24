@@ -1,8 +1,16 @@
 # Raspberry Pi 5 Hardware PWM Setup Guide
 
+> **NOTE:** This document is for reference and testing purposes only. The ROV production system now uses the **Pololu Mini Maestro 12-channel USB servo controller** for PWM generation, which is more capable and easier to set up than native Pi PWM.
+>
+> This guide remains useful for:
+> - Understanding hardware PWM capabilities
+> - Testing with 1-2 ESCs/servos
+> - Educational purposes
+> - Backup/alternative control methods
+
 ## Overview
 
-This guide documents how to enable hardware PWM on GPIO 12 and 13 on a Raspberry Pi 5 for ESC (Electronic Speed Controller) control in the ROV project.
+This guide documents how to enable hardware PWM on GPIO 12 and 13 on a Raspberry Pi 5 for ESC (Electronic Speed Controller) control.
 
 ## Background
 
@@ -350,22 +358,25 @@ The ROV control system uses GPIO buttons. To avoid conflicts with PWM pins:
 
 - ✅ Can test 2 ESCs with native PWM
 - ❌ Cannot control all 3 ROV thrusters with native PWM
-- ✅ Use Adafruit PCA9685 PWM hat for 3+ thruster operation
+- ✅ Use Pololu Maestro USB servo controller for 3+ thruster operation (production solution)
 
 ### Production Recommendation
 
-For the ROV production system, **continue using the Adafruit PCA9685 PWM hat** because:
+For the ROV production system, **use the Pololu Mini Maestro 12-channel USB servo controller** because:
 
-1. Supports 16 PWM channels (far more than needed)
+1. Supports 12 PWM channels (more than enough for 3 thrusters + expansion)
 2. No GPIO pin conflicts
-3. Works identically on Pi 4 and Pi 5
-4. Proven reliable for ESC control
-5. I2C interface doesn't consume GPIO pins
+3. Simple USB connection - no I2C, no HAT required
+4. Works on any Raspberry Pi with USB port
+5. Advanced features: speed/acceleration limiting, scripting capability
+6. No custom overlays or kernel configuration needed
+7. Easier troubleshooting and setup
 
 The native Pi 5 PWM is useful for:
 - Testing and development
 - Single or dual thruster configurations
 - Learning about hardware PWM
+- Backup control method if Maestro fails
 
 ## Configuration Files
 

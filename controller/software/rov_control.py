@@ -5,22 +5,18 @@ Main control script for underwater ROV with 3 thrusters
 """
 
 import time
-import board
-import busio
-from adafruit_pca9685 import PCA9685
 import RPi.GPIO as GPIO
 from typing import Dict, Tuple
 import signal
 import sys
+from maestro import Controller as MaestroController, microseconds_to_target
 
 class ROVController:
-    def __init__(self):
-        # PWM setup for thrusters
-        self.i2c = busio.I2C(board.SCL, board.SDA)
-        self.pca = PCA9685(self.i2c)
-        self.pca.frequency = 50  # 50Hz for ESCs
+    def __init__(self, maestro_port='/dev/serial0', maestro_baud=9600):
+        # Pololu Maestro setup for thrusters
+        self.maestro = MaestroController(port=maestro_port, baud_rate=maestro_baud)
 
-        # Thruster PWM channels (0-15 available)
+        # Thruster Maestro channels (0-11 available on 12-channel Maestro)
         self.THRUSTER_HORIZONTAL_1 = 0
         self.THRUSTER_HORIZONTAL_2 = 1
         self.THRUSTER_VERTICAL = 2
@@ -60,13 +56,6 @@ class ROVController:
 
         print("ROV Controller initialized")
 
-    def microseconds_to_duty_cycle(self, microseconds: int) -> int:
-        """Convert microseconds to 16-bit duty cycle value for PCA9685"""
-        # PCA9685 is 12-bit (0-4095), but we use 16-bit values
-        # 50Hz = 20ms period, so 1500us = 7.5% duty cycle
-        duty_cycle = int((microseconds / 20000.0) * 65535)
-        return min(65535, max(0, duty_cycle))
-
     def set_thruster_pwm(self, channel: int, power: float):
         """Set thruster power (-1.0 to 1.0)"""
         if self.emergency_stop:
@@ -85,8 +74,9 @@ class ROVController:
             # Reverse: 1500 to 1100
             microseconds = int(self.PWM_NEUTRAL + (power * (self.PWM_NEUTRAL - self.PWM_MIN)))
 
-        duty_cycle = self.microseconds_to_duty_cycle(microseconds)
-        self.pca.channels[channel].duty_cycle = duty_cycle
+        # Convert to Maestro target (quarter-microseconds) and send command
+        target = microseconds_to_target(microseconds)
+        self.maestro.setTarget(channel, target)
 
     def read_buttons(self) -> Dict[str, bool]:
         """Read all button states"""
@@ -145,7 +135,7 @@ class ROVController:
         print("Shutting down ROV controller...")
         self.emergency_stop_all()
         time.sleep(0.1)  # Brief pause to ensure PWM signals are sent
-        self.pca.deinit()
+        self.maestro.close()
         GPIO.cleanup()
         print("Cleanup complete")
 

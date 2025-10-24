@@ -23,8 +23,8 @@ If you're setting up a new Raspberry Pi 5 for the ROV:
 Located in `controller/software/`:
 
 - `test_input.py` - Test GPIO button inputs
-- `test_adafruit_pwm.py` - Test Adafruit PCA9685 PWM hat
-- `test_rpi_pwm.py` - Test Raspberry Pi native hardware PWM
+- `test_pololu_pwm.py` - Test Pololu Maestro USB servo controller (production)
+- `test_rpi_pwm.py` - Test Raspberry Pi native hardware PWM (development/testing only)
 
 ## Additional Documentation
 
