@@ -86,7 +86,8 @@ PWM_SETTINGS = {
 
 # Safety settings
 SAFETY = {
-    'max_power': 1.0,       # Full power available
+    'max_power': 1.0,       # Full power available (1.0 = 100%)
+    'power_limit': 0.10,    # Current power limit (0.10 = 10% of max)
     'startup_delay': 2.0,   # Seconds to wait before allowing thruster operation
     'heartbeat_timeout': 1.0,  # Seconds before emergency stop if no input
     'emergency_stop_gpio': 26  # GPIO pin for physical emergency stop button

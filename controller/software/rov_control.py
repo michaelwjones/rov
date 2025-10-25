@@ -107,6 +107,9 @@ class ROVController:
         # Clamp power to safe range
         power = max(-1.0, min(1.0, power))
 
+        # Apply power limit (e.g., 0.10 = 10% of max power)
+        power = power * SAFETY['power_limit']
+
         # Convert power to microseconds
         if power == 0:
             microseconds = PWM_SETTINGS['neutral']
@@ -245,6 +248,7 @@ def main():
         print(f"  Maestro Port: {MAESTRO_CONFIG['port']}")
         print(f"  Update Rate: {SYSTEM['update_rate']} Hz")
         print(f"  PWM Range: {PWM_SETTINGS['min_pulse']}-{PWM_SETTINGS['max_pulse']}µs")
+        print(f"  Power Limit: {SAFETY['power_limit']*100:.0f}% (adjust in config.py)")
         print()
         print("Button Mapping:")
         print(f"  H1 Forward: GPIO {BUTTON_PINS['h1_forward']}")
