@@ -30,8 +30,8 @@ MAESTRO_CONFIG = {
 
 THRUSTER_CHANNELS = {
     'horizontal_1': 0,  # Port thruster (left side)
-    'horizontal_2': 1,  # Starboard thruster (right side)
-    'vertical': 2       # Vertical thruster (up/down)
+    'horizontal_2': 2,  # Starboard thruster (right side) - swapped with vertical
+    'vertical': 1       # Vertical thruster (up/down) - swapped with horizontal_2
 }
 
 # Raspberry Pi 5 Hardware PWM Configuration (for testing only)
